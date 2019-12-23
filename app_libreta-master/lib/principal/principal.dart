@@ -5,7 +5,7 @@ import 'package:demo_sesion/model/materia.dart';
 import 'package:demo_sesion/model/profesor.dart';
 import 'package:demo_sesion/model/taller.dart';
 import 'package:flutter/material.dart';
-
+import 'package:image_downloader/image_downloader.dart';
 import 'package:http/http.dart' as http;
 import 'package:flutter/material.dart' as prefix0;
 import 'package:shared_preferences/shared_preferences.dart';
@@ -19,6 +19,8 @@ import 'package:demo_sesion/model/mensaje.dart';
 import 'package:demo_sesion/model/institucion.dart';
 import 'package:demo_sesion/model/alumnoSel.dart';
 import 'dart:async';
+import 'package:flutter/services.dart';
+import 'dart:io';
 import 'package:demo_sesion/principal/cal.dart';
 import 'package:demo_sesion/principal/data_table.dart';
 import 'package:demo_sesion/principal/prueba.dart';
@@ -42,6 +44,12 @@ class PrincipalMenu extends StatefulWidget {
 
 class _MyButtonState extends State<PrincipalMenu>
     with SingleTickerProviderStateMixin {
+  String _message = "";
+  String _path = "";
+  String _size = "";
+  String _mimeType = "";
+  File _imageFile;
+  int _progress = 0;
   AnimationController _controller;
   Duration _duration = Duration(milliseconds: 500);
   Tween<Offset> _tween = Tween(begin: Offset(0, 1), end: Offset(0, 0));
@@ -58,6 +66,11 @@ class _MyButtonState extends State<PrincipalMenu>
     super.initState();
     _controller = AnimationController(vsync: this, duration: _duration);
     _loadData();
+    ImageDownloader.callback(onProgressUpdate: (String imageId, int progress) {
+      setState(() {
+        _progress = progress;
+      });
+    });
   }
 
   final verde = const Color(0xF5970B);
@@ -1250,6 +1263,76 @@ class _MyButtonState extends State<PrincipalMenu>
       );
     }
 
+    Future<void> _downloadImage(String url,
+        {AndroidDestinationType destination, bool whenError = false}) async {
+      String fileName;
+      String path;
+      int size;
+      String mimeType;
+      try {
+        String imageId;
+
+        if (whenError) {
+          imageId =
+              await ImageDownloader.downloadImage(url).catchError((error) {
+            if (error is PlatformException) {
+              var path = "";
+              if (error.code == "404") {
+                print("Not Found Error.");
+              } else if (error.code == "unsupported_file") {
+                print("UnSupported FIle Error.");
+                path = error.details["unsupported_file_path"];
+              }
+              setState(() {
+                _message = error.toString();
+                _path = path;
+              });
+            }
+
+            print(error);
+          }).timeout(Duration(seconds: 10), onTimeout: () {
+            print("timeout");
+          });
+        } else {
+          if (destination == null) {
+            imageId = await ImageDownloader.downloadImage(url);
+          } else {
+            imageId = await ImageDownloader.downloadImage(
+              url,
+              destination: destination,
+            );
+          }
+        }
+
+        if (imageId == null) {
+          return;
+        }
+        fileName = await ImageDownloader.findName(imageId);
+        path = await ImageDownloader.findPath(imageId);
+        size = await ImageDownloader.findByteSize(imageId);
+        mimeType = await ImageDownloader.findMimeType(imageId);
+      } on PlatformException catch (error) {
+        setState(() {
+          _message = error.message;
+        });
+        return;
+      }
+
+      if (!mounted) return;
+
+      setState(() {
+        var location = Platform.isAndroid ? "Directory" : "Photo Library";
+        _message = 'Saved as "$fileName" in $location.\n';
+        _size = 'size:     $size';
+        _mimeType = 'mimeType: $mimeType';
+        _path = path;
+
+        if (!_mimeType.contains("video")) {
+          _imageFile = File(path);
+        }
+      });
+    }
+
     Widget cuerpoMateriasAlumno() {
       final cuadrado = Container(
           color: Color(0xFFE6E6E6),
@@ -1364,94 +1447,126 @@ class _MyButtonState extends State<PrincipalMenu>
                             ScrollController scrollController) {
                           return Container(
                               color: Colors.blue[800],
-                              child: contadorArchivo == 0 ?Center(child: Text("No tiene archivos subidos.",style: TextStyle(color: Colors.white),),) :ListView.builder(
-                                scrollDirection: Axis.vertical,
-                                itemCount: listArchivo.length,
-                                padding: EdgeInsets.all(10.0),
-                                itemBuilder: (lista, position) {
-                                  return GestureDetector(
-                                      child: Container(
-                                    margin: EdgeInsets.only(bottom: 20),
-                                    decoration: BoxDecoration(
-                                        borderRadius: BorderRadius.all(
-                                            Radius.circular(10.0)),
-                                        shape: BoxShape.rectangle,
-                                        color: Colors.white,
-                                        boxShadow: <BoxShadow>[
-                                          BoxShadow(
-                                              color: Colors.black38,
-                                              blurRadius: 4.0, //degradado
-                                              offset: Offset(2.0,
-                                                  5.0) //posision de la sombra
-                                              )
-                                        ]),
-                                    child: Card(
-                                      color: Colors.white,
-                                      child: Container(
-                                          width: double.infinity,
-                                          child: Row(
-                                            mainAxisAlignment:
-                                                MainAxisAlignment.spaceBetween,
-                                            mainAxisSize: MainAxisSize.max,
-                                            crossAxisAlignment:
-                                                CrossAxisAlignment.start,
-                                            children: <Widget>[
-                                              Flexible(
-                                                child: Container(
-                                                  margin: EdgeInsets.all(5.0),
-                                                  child: Wrap(
-                                                    alignment:
-                                                        WrapAlignment.start,
-                                                    direction: Axis.horizontal,
-                                                    runSpacing: 5.0,
-                                                    children: <Widget>[
-                                                      Column(
-                                                        mainAxisSize:
-                                                            MainAxisSize.max,
-                                                        mainAxisAlignment:
-                                                            MainAxisAlignment
-                                                                .start,
-                                                        crossAxisAlignment:
-                                                            CrossAxisAlignment
-                                                                .start,
-                                                        children: <Widget>[
-                                                          Text(
-                                                            "Nombre: " +
-                                                                listArchivo[
-                                                                        position]
-                                                                    .nombreArchivo,
-                                                          ),
-                                                          Text("Descripcion: " +
-                                                              listArchivo[
-                                                                      position]
-                                                                  .descripcionArchivo),
-                                                          Text("Materia: " +
-                                                              listArchivo[
-                                                                      position]
-                                                                  .nombreMateria),
-                                                          Text("Profesor: " +
-                                                              listArchivo[
-                                                                      position]
-                                                                  .nombreProfesor),
-                                                          Icon(
-                                                            Icons.file_download,
-                                                            color: Colors.pink,
-                                                            size: 24.0,
-                                                            semanticLabel:
-                                                                'Text to announce in accessibility modes',
-                                                          ),
-                                                        ],
-                                                      )
-                                                    ],
-                                                  ),
-                                                ),
-                                              ),
-                                            ],
-                                          )),
-                                    ),
-                                  ));
-                                },
-                              ));
+                              child: contadorArchivo == 0
+                                  ? Center(
+                                      child: Text(
+                                        "No tiene archivos subidos.",
+                                        style: TextStyle(color: Colors.white),
+                                      ),
+                                    )
+                                  : ListView.builder(
+                                      scrollDirection: Axis.vertical,
+                                      itemCount: listArchivo.length,
+                                      padding: EdgeInsets.all(10.0),
+                                      itemBuilder: (lista, position) {
+                                        return GestureDetector(
+                                            child: Container(
+                                          margin: EdgeInsets.only(bottom: 20),
+                                          decoration: BoxDecoration(
+                                              borderRadius: BorderRadius.all(
+                                                  Radius.circular(10.0)),
+                                              shape: BoxShape.rectangle,
+                                              color: Colors.white,
+                                              boxShadow: <BoxShadow>[
+                                                BoxShadow(
+                                                    color: Colors.black38,
+                                                    blurRadius: 4.0, //degradado
+                                                    offset: Offset(2.0,
+                                                        5.0) //posision de la sombra
+                                                    )
+                                              ]),
+                                          child: Card(
+                                            color: Colors.white,
+                                            child: Container(
+                                                width: double.infinity,
+                                                child: Row(
+                                                  mainAxisAlignment:
+                                                      MainAxisAlignment
+                                                          .spaceBetween,
+                                                  mainAxisSize:
+                                                      MainAxisSize.max,
+                                                  crossAxisAlignment:
+                                                      CrossAxisAlignment.start,
+                                                  children: <Widget>[
+                                                    Flexible(
+                                                      child: Container(
+                                                        margin:
+                                                            EdgeInsets.all(5.0),
+                                                        child: Wrap(
+                                                          alignment:
+                                                              WrapAlignment
+                                                                  .start,
+                                                          direction:
+                                                              Axis.horizontal,
+                                                          runSpacing: 5.0,
+                                                          children: <Widget>[
+                                                            Column(
+                                                              mainAxisSize:
+                                                                  MainAxisSize
+                                                                      .max,
+                                                              mainAxisAlignment:
+                                                                  MainAxisAlignment
+                                                                      .start,
+                                                              crossAxisAlignment:
+                                                                  CrossAxisAlignment
+                                                                      .start,
+                                                              children: <
+                                                                  Widget>[
+                                                                Text(
+                                                                  "Nombre: " +
+                                                                      listArchivo[
+                                                                              position]
+                                                                          .nombreArchivo,
+                                                                ),
+                                                                Text("Descripcion: " +
+                                                                    listArchivo[
+                                                                            position]
+                                                                        .descripcionArchivo),
+                                                                Text("Materia: " +
+                                                                    listArchivo[
+                                                                            position]
+                                                                        .nombreMateria),
+                                                                Text("Profesor: " +
+                                                                    listArchivo[
+                                                                            position]
+                                                                        .nombreProfesor),
+                                                                RaisedButton
+                                                                    .icon(
+                                                                  icon: Icon(
+                                                                    Icons
+                                                                        .file_download,
+                                                                    color: Colors
+                                                                        .white,
+                                                                    size: 30.0,
+                                                                  ),
+                                                                  label: Text(
+                                                                      "Descargar"),
+                                                                  onPressed:
+                                                                      () {
+                                                                    _downloadImage(
+                                                                      "https://libretavirtual.cl/" +
+                                                                          listArchivo[position]
+                                                                              .rutaArchivo,
+                                                                      destination: AndroidDestinationType
+                                                                          .directoryPictures
+                                                                        ..inExternalFilesDir()
+                                                                        ..subDirectory(
+                                                                            listArchivo[position].nombreArchivo),
+                                                                    );
+                                                                  },
+                                                                ),
+                                                              ],
+                                                            )
+                                                          ],
+                                                        ),
+                                                      ),
+                                                    ),
+                                                  ],
+                                                )),
+                                          ),
+                                        ));
+                                      },
+                                    ));
                         },
                       ),
                     ),
@@ -2757,9 +2872,12 @@ class _MyButtonState extends State<PrincipalMenu>
                       : text == 4
                           ? calendarizarFinal()
                           : text == 5
-                              ? contFecha == 1
-                                  ? pruebaFechas()
-                                  : CircularProgressIndicator()
+                              ? MaterialApp(
+                                  debugShowCheckedModeBanner: false,
+                                  home: SafeArea(
+                                    child: CalendarPage2(fechas),
+                                  ),
+                                )
                               : text == 6
                                   ? contadorPerfilProfesor == 1
                                       ? perfilProfesor()

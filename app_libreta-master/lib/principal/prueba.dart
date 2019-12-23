@@ -37,7 +37,6 @@ class _HomePageState extends State<HomePage>
       body: SizedBox.expand(
         child: Stack(
           children: <Widget>[
-            FlutterLogo(size: 500),
             SizedBox.expand(
               child: SlideTransition(
                 position: _tween.animate(_controller),
