@@ -66,6 +66,14 @@ class _MyButtonState extends State<PrincipalMenu>
     super.initState();
     _controller = AnimationController(vsync: this, duration: _duration);
     _loadData();
+    //vistosApoderado();
+    //mensajesSinLeerAlumno();
+    setState(() {
+      if (data.length>0) {
+        purasweas();
+      }
+    
+    });
     ImageDownloader.callback(onProgressUpdate: (String imageId, int progress) {
       setState(() {
         _progress = progress;
@@ -181,6 +189,21 @@ class _MyButtonState extends State<PrincipalMenu>
     }
   }
 
+  Widget purasweas() {
+    print("jiji");
+    return FutureBuilder(
+      future: http.post("https://libretavirtual.cl/getMensajeSinLeerAlumno",
+          body: {'idAlumno': data[0]}),
+      builder: (context, snapshot) {
+        if (snapshot.connectionState == ConnectionState.done) {
+          print("si");
+        } else {
+          print("no");
+        }
+      },
+    );
+  }
+
   void loadAlumnos(id, seleccion) {
     print("xxxxxxxxxxxxxxxxxxx");
     print(id);
@@ -275,8 +298,11 @@ class _MyButtonState extends State<PrincipalMenu>
 
   void mensajesSinLeerAlumno() async {
     Servicio servicio = Servicio();
+    print("---------------");
+    print(data[0]);
+    print("---------------");
     String resultado = await servicio.mensajesSinLeerAlumno(data[0]);
-    print("alu");
+
     if (resultado != "0") {
       setState(() {
         contadorAviso1 = 1;
@@ -509,6 +535,7 @@ class _MyButtonState extends State<PrincipalMenu>
     if (cursoList.length > 0) {
       setState(() {
         contadorCursoAlumno = 1;
+        _neverSatisfied();
         _cursosAlumno();
       });
     } else {}
@@ -1203,6 +1230,38 @@ class _MyButtonState extends State<PrincipalMenu>
     ));
   }
 
+  Widget vistosApoderado() {
+    Servicio servicio = Servicio();
+    return FutureBuilder<String>(
+        future: servicio.mensajesSinLeerApoderado(data[0]),
+        builder: (BuildContext context, AsyncSnapshot<String> snapshot) {
+          if (snapshot.hasData) {
+            print("funciono");
+            contadorAviso = 1;
+            contMsgApoderado = snapshot.hasData.toString();
+          } else if (snapshot.hasError) {
+            contadorAviso = 0;
+            print("ERROR");
+          }
+        });
+  }
+
+  Widget vistosAlumnos(BuildContext context) {
+    Servicio servicio = Servicio();
+    return FutureBuilder<String>(
+        future: servicio.mensajesSinLeerAlumno(data[0]),
+        builder: (BuildContext context, AsyncSnapshot<String> snapshot) {
+          if (snapshot.hasData) {
+            print("funciono");
+            contadorAviso1 = 1;
+            contMsgAlumno = snapshot.hasData.toString();
+          } else if (snapshot.hasError) {
+            contadorAviso1 = 0;
+            print("ERROR");
+          }
+        });
+  }
+
   @override
   Widget build(BuildContext context) {
     var deviceData = MediaQuery.of(context).orientation;
@@ -1210,58 +1269,15 @@ class _MyButtonState extends State<PrincipalMenu>
     var ancho = MediaQuery.of(context).size.height;
     //mensajesSinLeerApoderado();
     //mensajesSinLeerAlumno();
-    setState(() {
-      if (contadorCursoAlumno == 0) {
-        cursosAlumnos();
-      }
+  
+  
       if (contadorAviso == 0) {
         mensajesSinLeerApoderado();
       }
       if (contadorAviso1 == 0) {
-        mensajesSinLeerAlumno();
+         mensajesSinLeerAlumno();
       }
-    });
-
-    Widget build(BuildContext context) {
-      return Scaffold(
-        appBar: AppBar(
-          title: const Text('DraggableScrollableSheet'),
-        ),
-        body: SizedBox.expand(
-          child: DraggableScrollableSheet(
-            builder: (BuildContext context, ScrollController scrollController) {
-              return Container(
-                color: Colors.blue[100],
-                child: ListView.builder(
-                  controller: scrollController,
-                  itemCount: 25,
-                  itemBuilder: (BuildContext context, int index) {
-                    return ListTile(title: Text('Item $index'));
-                  },
-                ),
-              );
-            },
-          ),
-        ),
-      );
-    }
-
-    Widget prueba2019() {
-      return DraggableScrollableSheet(
-        builder: (BuildContext context, ScrollController scrollController) {
-          return Container(
-            color: Colors.blue[100],
-            child: ListView.builder(
-              controller: scrollController,
-              itemCount: 25,
-              itemBuilder: (BuildContext context, int index) {
-                return ListTile(title: Text('Item $index'));
-              },
-            ),
-          );
-        },
-      );
-    }
+    
 
     Future<void> _downloadImage(String url,
         {AndroidDestinationType destination, bool whenError = false}) async {
@@ -2582,7 +2598,6 @@ class _MyButtonState extends State<PrincipalMenu>
                           setState(() {
                             text = 1;
                             cursosAlumnos();
-                            _neverSatisfied();
                           });
                         }),
                     new ListTile(
@@ -2595,6 +2610,7 @@ class _MyButtonState extends State<PrincipalMenu>
                         onTap: () {
                           Navigator.of(context).pop();
                           setState(() {
+                            getFechas();
                             text = 2;
                           });
                         }),

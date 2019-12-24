@@ -21,13 +21,14 @@ class _CalendarPage2State extends State<CalendarPage2> {
   _CalendarPage2State(this.fechas);
   double cHeight;
   int prueba = 0;
-  Widget listview = Text("Seleccione el dia correspondiente al evento para ver su descripción");
+  Widget listview = Text(
+      "Seleccione el dia correspondiente al evento para ver su descripción");
 
   @override
   void initState() {
     super.initState();
-    //hola();
-
+    hola();
+    getFechas();
     if (fechas.length != 0) {
       hola();
     } else {
@@ -44,7 +45,6 @@ class _CalendarPage2State extends State<CalendarPage2> {
   void hola() {
     diasEventos.clear();
     for (int i = 0; i < fechas.length; i++) {
-  
       print(fechas[i].fecha);
       dias = fechas[i].fecha.split('/');
 
@@ -55,6 +55,7 @@ class _CalendarPage2State extends State<CalendarPage2> {
 
   @override
   Widget build(BuildContext context) {
+    hola();
 
     List<DateTime> presentDates = [
       DateTime(2019, 2, 1),
@@ -283,7 +284,8 @@ class _CalendarPage2State extends State<CalendarPage2> {
             child: listview,
           )
         ],
-      ),backgroundColor: Color(0xFFE6E6E6),
+      ),
+      backgroundColor: Color(0xFFE6E6E6),
     );
   }
 
