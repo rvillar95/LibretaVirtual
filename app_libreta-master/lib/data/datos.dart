@@ -265,15 +265,15 @@ class Servicio {
     return perfilApoderado;
   }
 
-  Future<List<Alumno>> getPerfilAlumno(id) async {
-    var response = await http.post(urlGetPerfilAlumno, body: {"id": id});
-    if (response.statusCode == 200 && response.body != '"Error"') {
-      perfilAlumno = (json.decode(response.body) as List)
-          .map((o) => Alumno.fromJson(o))
-          .toList();
-    }
-    return perfilAlumno;
-  }
+  //Future<List<Alumno>> getPerfilAlumno(id) async {
+  //  var response = await http.post(urlGetPerfilAlumno, body: {"id": id});
+  //  if (response.statusCode == 200 && response.body != '"Error"') {
+  //    perfilAlumno = (json.decode(response.body) as List)
+  //        .map((o) => Alumno.fromJson(o))
+  //        .toList();
+  //  }
+  //  return perfilAlumno;
+  //}
 
   Future<List<Profesor>> getPerfilProfesor(id) async {
     var response = await http.post(urlGetPerfilProfesor, body: {"id": id});
@@ -285,7 +285,7 @@ class Servicio {
     return perfilProfesor;
   }
 
-  Future mensajesSinLeerApoderado(idApoderado) async {
+  Future<String> mensajesSinLeerApoderado(idApoderado) async {
     var response = await http.post(urlGetMensajesSinLeerApoderado,
         body: {'idApoderado': idApoderado});
 
@@ -299,29 +299,7 @@ class Servicio {
     return response.body;
   }
 
-  Future<List<Curso>> getCursosAlumnos(id) async {
-    var response = await http.post(urlGetCursosAlumno, body: {'idAlumno': id});
-
-    if (response.statusCode == 200 && response.body != '"Error"') {
-      cursoList = (json.decode(response.body) as List)
-          .map((o) => Curso.fromJson(o))
-          .toList();
-    }
-    return cursoList;
-  }
-
-  Future<List<Materia>> getMateriaAlumnos(id) async {
-    var response = await http.post(urlGetMateriasAlumno, body: {'idCurso': id});
-
-    if (response.statusCode == 200 && response.body != '"Error"') {
-      listMateria = (json.decode(response.body) as List)
-          .map((o) => Materia.fromJson(o))
-          .toList();
-    }
-    return listMateria;
-  }
-
-  Future<List<Archivo>> getAchivoMateria(idCurso, idMateria) async {
+  Future<List<Archivo>> getAchivoMateria2(idCurso, idMateria) async {
     var response = await http.post(urlGetArchivosMateria,
         body: {'idCurso': idCurso, 'idMateria': idMateria});
 
@@ -332,4 +310,118 @@ class Servicio {
     }
     return listArchivo;
   }
+
+  //Future<List<Curso>> getCursosAlumnos(id) async {
+  //var response = await http.post(urlGetCursosAlumno, body: {'idAlumno': id});
+
+  //if (response.statusCode == 200 && response.body != '"Error"') {
+  //cursoList = (json.decode(response.body) as List)
+  //  .map((o) => Curso.fromJson(o))
+  //.toList();
+  //}
+  //return cursoList;
+  //}
+
+  //NUEVOS METODOS CON STREAM
+
+  //******************************ALUMNOS*********************************** */
+  static Future mensajesAlumnos(idAlumno) async {
+    http.Response response = await http.post(
+        "https://libretavirtual.cl/getMensajesAlumno",
+        body: {'id': idAlumno});
+
+    await Future.delayed(Duration(seconds: 2));
+
+    String content = response.body;
+    List collection = json.decode(content);
+    List<Mensaje> _mensajes =
+        collection.map((json) => Mensaje.fromJson(json)).toList();
+    return _mensajes;
+  }
+
+  static Future mensajesSinVerAlumnos(idAlumno) async {
+    http.Response response = await http.post(
+        "https://libretavirtual.cl/getMensajesSinProcesarAlumno",
+        body: {'idAlumno': idAlumno});
+
+    await Future.delayed(Duration(seconds: 2));
+
+    String content = response.body;
+    List collection = json.decode(content);
+    List<Mensaje> _mensajesSinVer =
+        collection.map((json) => Mensaje.fromJson(json)).toList();
+    return _mensajesSinVer;
+  }
+
+  static Future institucionAlumno(idAlumno) async {
+    http.Response response = await http.post(
+        "https://libretavirtual.cl/getInstitucion2",
+        body: {'id': idAlumno});
+
+    await Future.delayed(Duration(seconds: 2));
+
+    String content = response.body;
+    List collection = json.decode(content);
+    List<Institucion> _institucion =
+        collection.map((json) => Institucion.fromJson(json)).toList();
+    return _institucion;
+  }
+
+  static Future<List<Curso>> getCursosAlumnos(id) async {
+    http.Response response = await http.post(
+        "https://libretavirtual.cl/getCursosAlumno",
+        body: {'idAlumno': id});
+
+    //  await Future.delayed(Duration(seconds: 2));
+
+    String content = response.body;
+    List collection = json.decode(content);
+    List<Curso> _curso =
+        collection.map((json) => Curso.fromJson(json)).toList();
+    return _curso;
+  }
+
+  static Future<List<Materia>> getMateriaAlumnos(id) async {
+    http.Response response = await http.post(
+        "https://libretavirtual.cl/getMateriasAlumno",
+        body: {'idCurso': id});
+
+    //  await Future.delayed(Duration(seconds: 2));
+
+    String content = response.body;
+    List collection = json.decode(content);
+    List<Materia> _materia =
+        collection.map((json) => Materia.fromJson(json)).toList();
+    return _materia;
+  }
+
+  static Future<List<Archivo>> getAchivoMateria(idCurso, idMateria) async {
+    http.Response response = await http.post(
+        "https://libretavirtual.cl/getArchivosMateria",
+        body: {'idCurso': idCurso, 'idMateria': idMateria});
+
+    await Future.delayed(Duration(seconds: 2));
+
+    String content = response.body;
+    List collection = json.decode(content);
+    List<Archivo> _archivo =
+        collection.map((json) => Archivo.fromJson(json)).toList();
+    return _archivo;
+  }
+
+  static Future<List<Alumno>> getPerfilAlumno(id) async {
+    http.Response response = await http.post(
+        "https://libretavirtual.cl/getPerfilAlumno",
+        body: {'id': id});
+
+    await Future.delayed(Duration(seconds: 2));
+
+    String content = response.body;
+    List collection = json.decode(content);
+    List<Alumno> _alumno =
+        collection.map((json) => Alumno.fromJson(json)).toList();
+    return _alumno;
+  }
+
+  //******************************ALUMNOS*********************************** */
 }

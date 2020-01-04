@@ -7,7 +7,7 @@ import 'package:demo_sesion/data/datos.dart';
 import 'package:demo_sesion/model/profesor.dart';
 import 'package:demo_sesion/model/alumno.dart';
 import 'package:demo_sesion/model/apoderado.dart';
-
+import 'package:demo_sesion/principal/Alumno/main.dart';
 class Login extends StatefulWidget {
   var state;
   Login(this.state);
@@ -100,7 +100,7 @@ class _Login extends State<Login> {
         Navigator.push(
             context,
             MaterialPageRoute(
-                builder: (context) => PrincipalMenu([], 0, 0, "","")));
+                builder: (context) => MenuAlumno()));
       } else {
         print("error");
       }

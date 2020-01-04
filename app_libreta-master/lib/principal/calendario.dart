@@ -16,6 +16,9 @@ class CalendarPage2 extends StatefulWidget {
 
 class _CalendarPage2State extends State<CalendarPage2> {
   List<Fechas> fechas;
+  List<Fechas> listFechas;
+  int jiji = 0;
+  int repetidor = 0;
   List<DateTime> diasEventos = [DateTime(2019, 09, 1)];
   List<String> dias;
   _CalendarPage2State(this.fechas);
@@ -39,13 +42,12 @@ class _CalendarPage2State extends State<CalendarPage2> {
   void getFechas() async {
     Servicio servicio = Servicio();
     fechas = await servicio.getFechas();
-    print(fechas.length);
+    print(fechas);
   }
 
   void hola() {
     diasEventos.clear();
     for (int i = 0; i < fechas.length; i++) {
-      print(fechas[i].fecha);
       dias = fechas[i].fecha.split('/');
 
       diasEventos.add(
@@ -57,6 +59,7 @@ class _CalendarPage2State extends State<CalendarPage2> {
   Widget build(BuildContext context) {
     hola();
 
+    var alto = MediaQuery.of(context).size.height;
     List<DateTime> presentDates = [
       DateTime(2019, 2, 1),
       DateTime(2019, 2, 3),
@@ -89,7 +92,7 @@ class _CalendarPage2State extends State<CalendarPage2> {
 
     DateTime _currentDate2 = DateTime.now();
     Widget _presentIcon(String day, String nombre, String descripcion,
-            String fechaEvento) =>
+            String fechaEvento, String fechaTotal) =>
         Container(
           decoration: BoxDecoration(
             color: Colors.blue,
@@ -101,123 +104,206 @@ class _CalendarPage2State extends State<CalendarPage2> {
             child: GestureDetector(
                 onTap: () {
                   setState(() {
+                    print(fechaTotal);
+                    print(fechas[1].fecha);
+                    repetidor = 0;
+                    for (var i = 0; i < fechas.length; i++) {
+                      if (fechas[i].fecha == fechaTotal) {
+                        repetidor++;
+                      }
+                    }
+                    print(repetidor);
                     listview = Text("");
-                    listview = Container(
-                      child: Column(
-                        mainAxisSize: MainAxisSize.max,
-                        mainAxisAlignment: MainAxisAlignment.start,
-                        children: <Widget>[
-                          Expanded(
-                            child: Card(
-                              margin: EdgeInsets.all(15.0),
-                              elevation: 100,
-                              child: Container(
-                                width: double.infinity,
+                    listview = repetidor == 1
+                        ? ListView(
+                            padding: const EdgeInsets.all(8),
+                            children: <Widget>[
+                              Container(
+                                margin: EdgeInsets.all(5),
+                                padding: EdgeInsets.all(5),
                                 decoration: BoxDecoration(
-                                    color: Colors.blue,
-                                    borderRadius: BorderRadius.circular(5.0),
+                                    borderRadius:
+                                        BorderRadius.all(Radius.circular(10.0)),
+                                    shape: BoxShape.rectangle,
+                                    color: Colors.white,
                                     boxShadow: <BoxShadow>[
                                       BoxShadow(
-                                          color: Colors.black,
-                                          blurRadius: 10.0,
-                                          offset: Offset(0.0, 1.0))
+                                          color: Colors.black38,
+                                          blurRadius: 4.0, //degradado
+                                          offset: Offset(
+                                              2.0, 5.0) //posision de la sombra
+                                          )
                                     ]),
-                                child: Column(
+                                child: Wrap(
+                                  alignment: WrapAlignment.start,
+                                  direction: Axis.horizontal,
+                                  runSpacing: 5.0,
                                   children: <Widget>[
-                                    Expanded(
-                                        flex: 1,
-                                        child: Row(
-                                          mainAxisAlignment:
-                                              MainAxisAlignment.start,
-                                          mainAxisSize: MainAxisSize.max,
-                                          children: <Widget>[
-                                            Container(
-                                              margin:
-                                                  EdgeInsets.only(left: 10.0),
-                                              child: Text(
-                                                "Evento: ",
-                                                style: TextStyle(
-                                                    wordSpacing: 3.0,
-                                                    color: Colors.black,
-                                                    fontSize: 17.0,
-                                                    fontFamily: "Lobster"),
-                                              ),
-                                            ),
-                                            Expanded(
-                                              child: Text(
-                                                nombre,
-                                                style: TextStyle(
-                                                    wordSpacing: 3.0,
-                                                    color: Colors.white,
-                                                    fontSize: 15.0,
-                                                    fontFamily: "Lobster"),
-                                              ),
-                                            )
-                                          ],
-                                        )),
-                                    Expanded(
-                                        flex: 1,
-                                        child: Row(
-                                          children: <Widget>[
-                                            Container(
-                                              margin:
-                                                  EdgeInsets.only(left: 10.0),
-                                              child: Text(
-                                                "Fecha: ",
-                                                style: TextStyle(
-                                                    wordSpacing: 3.0,
-                                                    color: Colors.black,
-                                                    fontSize: 17.0,
-                                                    fontFamily: "Lobster"),
-                                              ),
-                                            ),
-                                            Expanded(
-                                              child: Text(
-                                                fechaEvento,
-                                                style: TextStyle(
-                                                    wordSpacing: 3.0,
-                                                    color: Colors.white,
-                                                    fontSize: 15.0,
-                                                    fontFamily: "Lobster"),
-                                              ),
-                                            )
-                                          ],
-                                        )),
-                                    Expanded(
-                                        flex: 4,
-                                        child: Row(
-                                          mainAxisSize: MainAxisSize.max,
-                                          mainAxisAlignment:
-                                              MainAxisAlignment.center,
-                                          children: <Widget>[
-                                            Container(
-                                                child: Expanded(
-                                                    child: Wrap(
-                                              alignment: WrapAlignment.center,
-                                              direction: Axis.horizontal,
-                                              spacing: 5.0,
-                                              runSpacing: 2.0,
-                                              children: <Widget>[
-                                                Text(
-                                                  descripcion,
-                                                  style: TextStyle(
-                                                      wordSpacing: 3.0,
-                                                      color: Colors.white,
-                                                      fontSize: 15.0,
-                                                      fontFamily: "Lobster"),
-                                                ),
-                                              ],
-                                            ))),
-                                          ],
-                                        ))
+                                    Column(
+                                      mainAxisSize: MainAxisSize.max,
+                                      mainAxisAlignment:
+                                          MainAxisAlignment.start,
+                                      crossAxisAlignment:
+                                          CrossAxisAlignment.start,
+                                      children: <Widget>[
+                                        Text(
+                                          "Nombre: ",
+                                          style: TextStyle(
+                                              fontWeight: FontWeight.bold),
+                                        ),
+                                        Text(nombre),
+                                          Text(
+                                          "Fecha: ",
+                                          style: TextStyle(
+                                              fontWeight: FontWeight.bold),
+                                        ),
+                                        Text(fechaEvento),
+                                        Text(
+                                          "Descripcion: ",
+                                          style: TextStyle(
+                                              fontWeight: FontWeight.bold),
+                                        ),
+                                        Text(descripcion),
+                                      
+                                      ],
+                                    )
                                   ],
                                 ),
                               ),
-                            ),
+                            ],
                           )
-                        ],
-                      ),
-                    );
+                        : ListView.builder(
+                            padding: const EdgeInsets.all(8),
+                            itemCount: fechas?.length ?? 0,
+                            itemBuilder: (lista, position) {
+                              Fechas prueba = fechas[position];
+                              if (prueba.fecha == fechaTotal) {
+                                return Container(
+                                  margin: EdgeInsets.all(5),
+                                  padding: EdgeInsets.all(5),
+                                  decoration: BoxDecoration(
+                                      borderRadius: BorderRadius.all(
+                                          Radius.circular(10.0)),
+                                      shape: BoxShape.rectangle,
+                                      color: Colors.white,
+                                      boxShadow: <BoxShadow>[
+                                        BoxShadow(
+                                            color: Colors.black38,
+                                            blurRadius: 4.0, //degradado
+                                            offset: Offset(2.0,
+                                                5.0) //posision de la sombra
+                                            )
+                                      ]),
+                                  child: Wrap(
+                                    alignment: WrapAlignment.start,
+                                    direction: Axis.horizontal,
+                                    runSpacing: 5.0,
+                                    children: <Widget>[
+                                      Column(
+                                        mainAxisSize: MainAxisSize.max,
+                                        mainAxisAlignment:
+                                            MainAxisAlignment.start,
+                                        crossAxisAlignment:
+                                            CrossAxisAlignment.start,
+                                        children: <Widget>[
+                                          Text(
+                                            "Nombre Evento: ",
+                                            style: TextStyle(
+                                                fontWeight: FontWeight.bold),
+                                          ),
+                                          Text(prueba.nombreEvento),
+                                          Text("Fecha: ",
+                                              style: TextStyle(
+                                                  fontWeight: FontWeight.bold)),
+                                          Text(prueba.fechaEvento),
+                                          Text("Descripcion: ",
+                                              style: TextStyle(
+                                                  fontWeight: FontWeight.bold)),
+                                          Text(prueba.descripcionEvento),
+                                        ],
+                                      )
+                                    ],
+                                  ),
+                                );
+                              } else {
+                                return SizedBox(
+                                  width: 1,
+                                );
+                              }
+                            });
+                  });
+                },
+                child: Text(
+                  day,
+                  style: TextStyle(
+                    color: Colors.black,
+                  ),
+                )),
+          ),
+        );
+
+    Widget _iconosPresentador(
+            String day,
+            String month,
+            String year,
+            String nombre,
+            String descripcion,
+            String fechaEvento,
+            diasEventos) =>
+        Container(
+          decoration: BoxDecoration(
+            color: Colors.blue,
+            borderRadius: BorderRadius.all(
+              Radius.circular(1000),
+            ),
+          ),
+          child: Center(
+            child: GestureDetector(
+                onTap: () {
+                  setState(() {
+                    listview = ListView.builder(
+                        padding: const EdgeInsets.all(8),
+                        itemCount: fechas?.length ?? 0,
+                        itemBuilder: (lista, position) {
+                          return Container(
+                            margin: EdgeInsets.all(5),
+                            padding: EdgeInsets.all(5),
+                            decoration: BoxDecoration(
+                                borderRadius:
+                                    BorderRadius.all(Radius.circular(10.0)),
+                                shape: BoxShape.rectangle,
+                                color: Colors.white,
+                                boxShadow: <BoxShadow>[
+                                  BoxShadow(
+                                      color: Colors.black38,
+                                      blurRadius: 4.0, //degradado
+                                      offset: Offset(
+                                          2.0, 5.0) //posision de la sombra
+                                      )
+                                ]),
+                            child: Wrap(
+                              alignment: WrapAlignment.start,
+                              direction: Axis.horizontal,
+                              runSpacing: 5.0,
+                              children: <Widget>[
+                                Column(
+                                  mainAxisSize: MainAxisSize.max,
+                                  mainAxisAlignment: MainAxisAlignment.start,
+                                  crossAxisAlignment: CrossAxisAlignment.start,
+                                  children: <Widget>[
+                                    Text(
+                                      "Nombre: " +
+                                          fechas[position].nombreEvento,
+                                    ),
+                                    Text("Descripcion: " +
+                                        fechas[position].descripcionEvento),
+                                    Text("Materia: " + fechas[position].fecha),
+                                  ],
+                                )
+                              ],
+                            ),
+                          );
+                        });
                   });
                 },
                 child: Text(
@@ -238,24 +324,22 @@ class _CalendarPage2State extends State<CalendarPage2> {
     cHeight = MediaQuery.of(context).size.height;
 
     for (int i = 0; i < diasEventos.length; i++) {
-      for (int j = 0; j < fechas.length; j++) {
-        if (j == i) {
-          _markedDateMap.add(
-            diasEventos[i],
-            new Event(
-                date: diasEventos[i],
-                title: 'Event 5',
-                icon: _presentIcon(
-                    diasEventos[i].day.toString(),
-                    fechas[j].nombreEvento,
-                    fechas[j].descripcionEvento,
-                    fechas[j].fechaEvento)),
-          );
-        }
-      }
+      _markedDateMap.add(
+        diasEventos[i],
+        new Event(
+            date: diasEventos[i],
+            title: 'Event 5',
+            icon: _presentIcon(
+                diasEventos[i].day.toString(),
+                fechas[i].nombreEvento,
+                fechas[i].descripcionEvento,
+                fechas[i].fechaEvento,
+                fechas[i].fecha)),
+      );
     }
 
     _calendarCarouselNoHeader = CalendarCarousel<Event>(
+      locale: "es",
       weekendTextStyle: TextStyle(
         color: Colors.red,
       ),
@@ -280,7 +364,7 @@ class _CalendarPage2State extends State<CalendarPage2> {
             child: _calendarCarouselNoHeader,
           ),
           Expanded(
-            flex: 3,
+            flex: 4,
             child: listview,
           )
         ],

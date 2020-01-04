@@ -432,7 +432,7 @@ class _MyButtonState extends State<PrincipalMenu>
 
   void getPerfilAlumno() async {
     Servicio servicio = Servicio();
-    listPerfilAlumno = await servicio.getPerfilAlumno(data[0]);
+    //listPerfilAlumno = await servicio.getPerfilAlumno(data[0]);
 
     print(listPerfilAlumno.length);
     print(listPerfilAlumno[0].rutAlumno);
@@ -530,7 +530,7 @@ class _MyButtonState extends State<PrincipalMenu>
 
   void cursosAlumnos() async {
     Servicio servicio = Servicio();
-    cursoList = await servicio.getCursosAlumnos(data[0]);
+    //cursoList = await servicio.getCursosAlumnos(data[0]);
     print(cursoList.length);
     if (cursoList.length > 0) {
       setState(() {
@@ -543,7 +543,7 @@ class _MyButtonState extends State<PrincipalMenu>
 
   void archivoMateria() async {
     Servicio servicio = Servicio();
-    listArchivo = await servicio.getAchivoMateria(valorCurso, valorMateria);
+    //listArchivo = await servicio.getAchivoMateria(valorCurso, valorMateria);
     print("curso:" + valorCurso);
     print("materia:" + valorMateria);
     print(listArchivo.length);
@@ -560,7 +560,7 @@ class _MyButtonState extends State<PrincipalMenu>
 
   void materiasAlumno(_value) async {
     Servicio servicio = Servicio();
-    listMateria = await servicio.getMateriaAlumnos(_value);
+   // listMateria = await servicio.getMateriaAlumnos(_value);
     print("///////////////");
     print(listMateria.length);
     print("///////////////");
@@ -732,6 +732,7 @@ class _MyButtonState extends State<PrincipalMenu>
                   setState(() {
                     vistoMensajeAlumno(mensajeListAlumno[position].idMensaje);
                     getMensajeAlumno();
+                    mensajesSinLeerAlumno();
                   });
 
                   Navigator.push(
@@ -1272,10 +1273,10 @@ class _MyButtonState extends State<PrincipalMenu>
   
   
       if (contadorAviso == 0) {
-        mensajesSinLeerApoderado();
+      //  mensajesSinLeerApoderado();
       }
       if (contadorAviso1 == 0) {
-         mensajesSinLeerAlumno();
+       //  mensajesSinLeerAlumno();
       }
     
 
