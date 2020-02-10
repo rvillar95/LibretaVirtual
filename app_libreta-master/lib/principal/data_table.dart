@@ -3,17 +3,19 @@ import 'package:flutter/material.dart';
 import 'package:demo_sesion/principal/principal.dart';
 import 'dart:async';
 
+import 'Profesor/stream_profesor.dart';
+
 class DataTableDemo extends StatefulWidget {
   List<AlumnoSel> users;
   String seleccion;
   String id;
-  DataTableDemo(this.users, this.seleccion,this.id) : super();
+  DataTableDemo(this.users, this.seleccion, this.id) : super();
 
   final String title = "Data Table Flutter Demo";
 
   @override
   DataTableDemoState createState() =>
-      DataTableDemoState(this.users, this.seleccion,this.id);
+      DataTableDemoState(this.users, this.seleccion, this.id);
 }
 
 class DataTableDemoState extends State<DataTableDemo> {
@@ -22,8 +24,10 @@ class DataTableDemoState extends State<DataTableDemo> {
   String id;
   List<AlumnoSel> selectedUsers;
   bool sort;
+  String alumnosFinales;
+  final StreamProfesor demo = StreamProfesor();
 
-  DataTableDemoState(this.users, this.seleccion,this.id);
+  DataTableDemoState(this.users, this.seleccion, this.id);
 
   @override
   void initState() {
@@ -56,16 +60,23 @@ class DataTableDemoState extends State<DataTableDemo> {
     if (selectedUsers.length == 0) {
       print("malo");
     } else {
-      print("jiji");
-      print(selectedUsers);
-      print("jiji");
-      Navigator.push(
-          context,
-          MaterialPageRoute(
-              builder: (context) =>
-                  PrincipalMenu(selectedUsers, 1, 8, seleccion,id)));
+      // demo.cargarAlumnos(selectedUsers);
+      // demo.pruebaAlumno(selectedUsers);
+      // demo.mostrarPrueba();
+      String alumnos = "";
+      for (var i = 0; i < selectedUsers.length; i++) {
+        alumnos = selectedUsers[i].idAlumno + ",${alumnos}";
+      }
+      print(alumnos);
+      demo.saveAlumnos(alumnos);
+      demo.pruebaAlumno(alumnos);
+      demo.wawa(alumnos);
+      //demo.mostrarPrueba();
+      //  selectedUsers = demo.controller;
+      //StreamSubscription subscription =
+      //   demo.controller.stream.listen((item) => print(item));
+      //print(selectedUsers.length);
 
-      print(selectedUsers.length);
     }
   }
 
@@ -81,7 +92,7 @@ class DataTableDemoState extends State<DataTableDemo> {
         sortColumnIndex: 0,
         columns: [
           DataColumn(
-            label: Text("Nombre"),
+            label: Text("Nombre del Alumno"),
             numeric: false,
             tooltip: "Nombre del alumno",
           ),
@@ -150,18 +161,6 @@ class DataTableDemoState extends State<DataTableDemo> {
             children: <Widget>[
               Container(
                 width: double.infinity,
-                child: Center(
-                  child: Text(
-                    "Usted Selecciono un " + seleccion,
-                    style: TextStyle(
-                        fontFamily: 'Lobster',
-                        fontSize: 30.0,
-                        color: Colors.grey),
-                  ),
-                ),
-              ),
-              Container(
-                width: double.infinity,
                 child: dataBody(),
               ),
               Wrap(
@@ -191,6 +190,7 @@ class DataTableDemoState extends State<DataTableDemo> {
                   ),
                 ],
               ),
+              
             ],
           )),
     );

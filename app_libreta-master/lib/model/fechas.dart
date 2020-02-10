@@ -4,10 +4,10 @@ class Fechas {
   String nombreEvento;
   String descripcionEvento;
   String fechaEvento;
-
-  Fechas({this.idEvento,this.fecha,this.nombreEvento,this.descripcionEvento,this.fechaEvento});
+  String nombreProfesor;
+  Fechas({this.idEvento,this.fecha,this.nombreEvento,this.descripcionEvento,this.fechaEvento,this.nombreProfesor});
 
   factory Fechas.fromJson(Map<String, dynamic> json) {
-    return Fechas(idEvento: json['idEvento'],fecha: json['fecha'],nombreEvento: json['nombreEvento'],descripcionEvento: json['descripcionEvento'],fechaEvento: json['fechaEvento']);
+    return Fechas(idEvento: json['idEvento'],fecha: json['fecha'],nombreEvento: json['nombreEvento'],descripcionEvento: json['descripcionEvento'],fechaEvento: json['fechaEvento'],nombreProfesor: json['nombreProfesor']);
   }
 }

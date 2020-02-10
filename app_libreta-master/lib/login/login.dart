@@ -1,3 +1,5 @@
+import 'package:demo_sesion/principal/Apoderado/main.dart';
+import 'package:demo_sesion/principal/Profesor/main.dart';
 import 'package:demo_sesion/provider/push_notifications_provider.dart';
 import 'package:flutter/material.dart';
 import 'package:demo_sesion/principal/principal.dart';
@@ -73,7 +75,7 @@ class _Login extends State<Login> {
         Navigator.push(
             context,
             MaterialPageRoute(
-                builder: (context) => PrincipalMenu([], 0, 0, "","")));
+                builder: (context) => MenuProfesor()));
       } else {
         print("error");
       }
@@ -128,7 +130,7 @@ class _Login extends State<Login> {
         Navigator.push(
             context,
             MaterialPageRoute(
-                builder: (context) => PrincipalMenu([], 0, 0, "","")));
+                builder: (context) => MenuApoderado()));
       } else {
         print("error");
       }

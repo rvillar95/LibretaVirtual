@@ -69,10 +69,9 @@ class _MyButtonState extends State<PrincipalMenu>
     //vistosApoderado();
     //mensajesSinLeerAlumno();
     setState(() {
-      if (data.length>0) {
+      if (data.length > 0) {
         purasweas();
       }
-    
     });
     ImageDownloader.callback(onProgressUpdate: (String imageId, int progress) {
       setState(() {
@@ -560,7 +559,7 @@ class _MyButtonState extends State<PrincipalMenu>
 
   void materiasAlumno(_value) async {
     Servicio servicio = Servicio();
-   // listMateria = await servicio.getMateriaAlumnos(_value);
+    // listMateria = await servicio.getMateriaAlumnos(_value);
     print("///////////////");
     print(listMateria.length);
     print("///////////////");
@@ -645,6 +644,11 @@ class _MyButtonState extends State<PrincipalMenu>
             // Some code to undo the change.
           },
         )));
+  }
+
+  displaySnackBar(BuildContext context) {
+    final snackBar = SnackBar(content: Text('Are you talkin\' to me?'));
+    Scaffold.of(context).showSnackBar(snackBar);
   }
 
   void alertMensaje2(String texto) {
@@ -1265,20 +1269,19 @@ class _MyButtonState extends State<PrincipalMenu>
 
   @override
   Widget build(BuildContext context) {
+    print("Menu PRINCIPAL");
     var deviceData = MediaQuery.of(context).orientation;
     var alto = MediaQuery.of(context).size.height;
     var ancho = MediaQuery.of(context).size.height;
     //mensajesSinLeerApoderado();
     //mensajesSinLeerAlumno();
-  
-  
-      if (contadorAviso == 0) {
+
+    if (contadorAviso == 0) {
       //  mensajesSinLeerApoderado();
-      }
-      if (contadorAviso1 == 0) {
-       //  mensajesSinLeerAlumno();
-      }
-    
+    }
+    if (contadorAviso1 == 0) {
+      //  mensajesSinLeerAlumno();
+    }
 
     Future<void> _downloadImage(String url,
         {AndroidDestinationType destination, bool whenError = false}) async {
@@ -2874,40 +2877,41 @@ class _MyButtonState extends State<PrincipalMenu>
       appBar: new AppBar(
         backgroundColor: Colors.blue,
       ),
-      body: text == 1
-          ? calendarizarFinal()
-          : text == 15
-              ? prueba3 == 1
-                  ? mensajeTotalProfesor()
-                  : Center(
-                      child: Text("Sin Mensajes"),
-                    )
-              : text2 == 8
-                  ? pruebamensaje2
-                  : text == 8
+      body: Builder(
+          builder: (context) => text == 1
+              ? calendarizarFinal()
+              : text == 15
+                  ? prueba3 == 1
+                      ? mensajeTotalProfesor()
+                      : Center(
+                          child: Text("Sin Mensajes"),
+                        )
+                  : text2 == 8
                       ? pruebamensaje2
-                      : text == 4
-                          ? calendarizarFinal()
-                          : text == 5
-                              ? MaterialApp(
-                                  debugShowCheckedModeBanner: false,
-                                  home: SafeArea(
-                                    child: CalendarPage2(fechas),
-                                  ),
-                                )
-                              : text == 6
-                                  ? contadorPerfilProfesor == 1
-                                      ? perfilProfesor()
-                                      : Text("Cargando datos")
-                                  : text == 7
-                                      ? Text("Cuadro 7")
-                                      : Container(
-                                          decoration: BoxDecoration(
-                                              image: DecorationImage(
-                                                  image: AssetImage(
-                                                      "assets/img/profesor.png"),
-                                                  fit: BoxFit.contain)),
-                                        ),
+                      : text == 8
+                          ? pruebamensaje2
+                          : text == 4
+                              ? calendarizarFinal()
+                              : text == 5
+                                  ? MaterialApp(
+                                      debugShowCheckedModeBanner: false,
+                                      home: SafeArea(
+                                        child: CalendarPage2(fechas),
+                                      ),
+                                    )
+                                  : text == 6
+                                      ? contadorPerfilProfesor == 1
+                                          ? perfilProfesor()
+                                          : Text("Cargando datos")
+                                      : text == 7
+                                          ? Text("Cuadro 7")
+                                          : Container(
+                                              decoration: BoxDecoration(
+                                                  image: DecorationImage(
+                                                      image: AssetImage(
+                                                          "assets/img/profesor.png"),
+                                                      fit: BoxFit.contain)),
+                                            )),
       backgroundColor: Color(0xFFE6E6E6),
     );
 

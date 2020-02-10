@@ -6,15 +6,15 @@ import 'package:flutter_calendar_carousel/flutter_calendar_carousel.dart'
 import 'package:flutter_calendar_carousel/classes/event.dart';
 import 'package:flutter_calendar_carousel/classes/event_list.dart';
 
-class CalendarPage2 extends StatefulWidget {
+class CalendarioAlumno extends StatefulWidget {
   List<Fechas> fechas;
 
-  CalendarPage2(this.fechas) : super();
+  CalendarioAlumno(this.fechas) : super();
   @override
   _CalendarPage2State createState() => new _CalendarPage2State(this.fechas);
 }
 
-class _CalendarPage2State extends State<CalendarPage2> {
+class _CalendarPage2State extends State<CalendarioAlumno> {
   List<Fechas> fechas;
   List<Fechas> listFechas;
   int jiji = 0;
@@ -78,7 +78,7 @@ class _CalendarPage2State extends State<CalendarPage2> {
 
     DateTime _currentDate2 = DateTime.now();
     Widget _presentIcon(String day, String nombre, String descripcion,
-            String fechaEvento, String fechaTotal,String nombreProfesor) =>
+            String fechaEvento, String fechaTotal) =>
         Container(
           decoration: BoxDecoration(
             color: Colors.blue,
@@ -90,14 +90,15 @@ class _CalendarPage2State extends State<CalendarPage2> {
             child: GestureDetector(
                 onTap: () {
                   setState(() {
-                   
+                    print(fechaTotal);
+                    print(fechas[1].fecha);
                     repetidor = 0;
                     for (var i = 0; i < fechas.length; i++) {
                       if (fechas[i].fecha == fechaTotal) {
                         repetidor++;
                       }
                     }
-                    
+                    print(repetidor);
                     listview = Text("");
                     listview = repetidor == 1
                         ? ListView(
@@ -137,12 +138,6 @@ class _CalendarPage2State extends State<CalendarPage2> {
                                               fontWeight: FontWeight.bold),
                                         ),
                                         Text(nombre),
-                                        Text(
-                                            "Profesor: ",
-                                            style: TextStyle(
-                                                fontWeight: FontWeight.bold),
-                                          ),
-                                          Text(nombreProfesor),
                                         Text(
                                           "Fecha: ",
                                           style: TextStyle(
@@ -202,12 +197,6 @@ class _CalendarPage2State extends State<CalendarPage2> {
                                                 fontWeight: FontWeight.bold),
                                           ),
                                           Text(prueba.nombreEvento),
-                                          Text(
-                                            "Profesor: ",
-                                            style: TextStyle(
-                                                fontWeight: FontWeight.bold),
-                                          ),
-                                          Text(prueba.nombreProfesor),
                                           Text("Fecha: ",
                                               style: TextStyle(
                                                   fontWeight: FontWeight.bold)),
@@ -330,8 +319,7 @@ class _CalendarPage2State extends State<CalendarPage2> {
                 fechas[i].nombreEvento,
                 fechas[i].descripcionEvento,
                 fechas[i].fechaEvento,
-                fechas[i].fecha,
-                fechas[i].nombreProfesor)),
+                fechas[i].fecha)),
       );
     }
 

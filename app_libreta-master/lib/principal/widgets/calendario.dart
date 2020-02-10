@@ -67,6 +67,7 @@ class _CalendarScreenState extends State<CalendarScreen> {
           children: <Widget>[
             Container(
               child: Calendar(
+                  
                   events: _events,
                   onRangeSelected: (range) =>
                       print("Range is ${range.from}, ${range.to}"),

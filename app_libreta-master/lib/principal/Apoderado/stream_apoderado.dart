@@ -1,6 +1,8 @@
 import 'dart:async';
 import 'package:demo_sesion/data/controladorAlumno.dart';
+import 'package:demo_sesion/data/controladorApoderado.dart';
 import 'package:demo_sesion/model/alumno.dart';
+import 'package:demo_sesion/model/apoderado.dart';
 import 'package:demo_sesion/model/archivo.dart';
 import 'package:demo_sesion/model/curso.dart';
 import 'package:demo_sesion/model/fechas.dart';
@@ -8,12 +10,12 @@ import 'package:demo_sesion/model/institucion.dart';
 import 'package:demo_sesion/model/materia.dart';
 import 'package:demo_sesion/model/mensaje.dart';
 import 'package:flutter/material.dart';
-import 'package:shared_preferences/shared_preferences.dart';
 
-class StreamAlumno {
+
+class StreamApoderado {
   
 
-  ControladorAlumno servicio = ControladorAlumno();
+  ControladorApoderado servicio = ControladorApoderado();
   final mensajes = <Mensaje>[];
   final _controllerCounter = StreamController<int>();
   final _controllerCurso = StreamController<String>();
@@ -30,14 +32,14 @@ class StreamAlumno {
   int counterAchivo = 0;
   int counter = 0;
   int nMaterias = 0;
-  String idAlumno;
+  String idApoderado;
   String curso = "0";
   String materia;
   int contadorMensajes;
 
-  void cambiarIdAlumno(String dato) {
-    idAlumno = dato;
-    _controllerAlumno.add(idAlumno);
+  void cambiarIdApoderado(String dato) {
+    idApoderado = dato;
+    _controllerAlumno.add(idApoderado);
   }
 
   void closeStream() {
@@ -72,52 +74,32 @@ class StreamAlumno {
   Stream<int> get contadorFechasSemana => _contadorFechasSemana.stream;
 
   Stream<List<Mensaje>> get listViewMensajes async* {
-    yield await ControladorAlumno.mensajesAlumnos(idAlumno);
-    print("MENSAJES ALUMNO");
+    yield await ControladorApoderado.mensajesApoderado(idApoderado);
+    print("MENSAJES APODERADO");
   }
 
   Stream<List<Institucion>> get getInstitucion async* {
-    yield await ControladorAlumno.institucionAlumno(idAlumno);
-    print("INSTITUCION ALUMNO");
+    yield await ControladorApoderado.institucionApoderado(idApoderado);
+    print("INSTITUCION APODERADO");
   }
 
   Stream<List<Mensaje>> get mensajesSinLeer async* {
-    yield await ControladorAlumno.mensajesSinVerAlumnos(idAlumno);
-    print("MENSAJES SIN VER ALUMNO");
-  }
-
-  Stream<List<Curso>> get getCursosAlumnos async* {
-    yield await ControladorAlumno.getCursosAlumnos(idAlumno);
-    print("CURSOS ALUMNO");
-  }
-
-  Stream<List<Materia>> get getMateriasAlumno async* {
-    yield await ControladorAlumno.getMateriaAlumnos(curso);
-    print("MATERIAS ALUMNO");
-  }
-
-  Stream<List<Archivo>> get getArchivos async* {
-    yield await ControladorAlumno.getAchivoMateria(curso, materia);
-    print("ARCHIVOS ALUMNO");
-  }
-
-  Stream<List<Alumno>> get getPerfil async* {
-    yield await ControladorAlumno.getPerfilAlumno(idAlumno);
-    print("PERFIl ALUMNO");
+    yield await ControladorApoderado.mensajesSinVerApoderado(idApoderado);
+    print("MENSAJES SIN VER APODERADO");
   }
 
 
 
-  Stream<List<Fechas>> get getEventosSemanaAlumno async* {
-    yield await ControladorAlumno.getFechasSemanaAlumno(idAlumno);
-    print("EVENTOS SEMANA ALUMNO");
+  Stream<List<Apoderado>> get getPerfil async* {
+    yield await ControladorApoderado.getPerfilApoderado(idApoderado);
+    print("PERFIl APODERADO");
   }
 
-  void vistoMensajeAlumno(String idMensaje) async {
+  void vistoMensajeApoderado(String idMensaje) async {
     String fecha = DateTime.now().toString().substring(0, 11) +
         " " +
         TimeOfDay.now().toString().substring(10, 15);
 
-    await servicio.agregarVistoAlumno(idAlumno, idMensaje, fecha);
+    await servicio.agregarVistoApoderado(idApoderado, idMensaje, fecha);
   }
 }
