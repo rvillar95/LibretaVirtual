@@ -493,7 +493,7 @@ class _MyHomePageState extends State<MyHomePage>
       for (Curso cur in cursoList) {
         items.add(new DropdownMenuItem<String>(
           value: cur.idCurso.toString(),
-          child: Text(cur.nombreCurso.toString() ,style: TextStyle(color: Colors.blue,backgroundColor: Colors.black),),
+          child: Text(cur.nombreCurso.toString() ,style: TextStyle(color: Colors.white,backgroundColor: Colors.green.shade300),),
         ));
       }
       return Container(
@@ -1151,6 +1151,28 @@ class _MyHomePageState extends State<MyHomePage>
 
       print(cursoList.length);
       await Future.delayed(Duration(seconds: 2));
+    
+      if (cursoList.length > 0) {
+        print("+++++++++++++");
+        contador = 1;
+        setState(() {
+          if (contador == 1) {
+            _crearDropdownBlanco();
+          } else {
+            print("Error");
+          }
+        });
+      } else {
+        contador = 0;
+      }
+    }
+
+    void cursosProfesorMensaje() async {
+      Servicio servicio = Servicio();
+      cursoList = await servicio.getCursoProfesor(data[0]);
+
+      print(cursoList.length);
+      await Future.delayed(Duration(seconds: 2));
       demo.resetCounter(11);
       if (cursoList.length > 0) {
         print("+++++++++++++");
@@ -1424,138 +1446,7 @@ class _MyHomePageState extends State<MyHomePage>
       );
     }
 
-    Widget mensajesSinVer() {
-      return StreamBuilder(
-        stream: demo.mensajesSinLeer,
-        builder: (BuildContext context, AsyncSnapshot<List<Mensaje>> snapshot) {
-          switch (snapshot.connectionState) {
-            case ConnectionState.none:
-            case ConnectionState.waiting:
-            case ConnectionState.active:
-              return Center(child: LoaderOne());
-            case ConnectionState.done:
-              List<Mensaje> mensajesSinLeer = snapshot.data;
-
-              return mensajesSinLeer?.length == 0
-                  ? Center(
-                      child: Text(
-                      "No tiene mensajes sin leer.",
-                      style: TextStyle(color: Colors.red),
-                    ))
-                  : Container(
-                      color: Color(0xFFE6E6E6),
-                      child: ListView.builder(
-                        scrollDirection: Axis.vertical,
-                        itemCount: mensajesSinLeer?.length ?? 0,
-                        padding: EdgeInsets.all(10.0),
-                        itemBuilder: (lista, position) {
-                          Mensaje _mensaje = mensajesSinLeer[position];
-                          return GestureDetector(
-                              onTap: () {
-                                demo.vistoMensajeApoderado(_mensaje.idMensaje);
-                                Navigator.push(
-                                    context,
-                                    MaterialPageRoute(
-                                        builder: (context) => DetalleMensaje(
-                                            _mensaje.idMensaje,
-                                            _mensaje.nombreMensaje,
-                                            _mensaje.descripcionMensaje,
-                                            _mensaje.fechaCreacionMensaje,
-                                            _mensaje.nombreProfesor,
-                                            _mensaje.fotoProfesor,
-                                            _mensaje.curso)));
-                              },
-                              child: Container(
-                                margin: EdgeInsets.only(bottom: 20),
-                                decoration: BoxDecoration(
-                                    borderRadius:
-                                        BorderRadius.all(Radius.circular(10.0)),
-                                    shape: BoxShape.rectangle,
-                                    color: Colors.white,
-                                    boxShadow: <BoxShadow>[
-                                      BoxShadow(
-                                          color: Colors.black38,
-                                          blurRadius: 4.0, //degradado
-                                          offset: Offset(
-                                              2.0, 5.0) //posision de la sombra
-                                          )
-                                    ]),
-                                child: Card(
-                                  color: Colors.white,
-                                  child: Container(
-                                      width: double.infinity,
-                                      child: Row(
-                                        mainAxisAlignment:
-                                            MainAxisAlignment.spaceBetween,
-                                        mainAxisSize: MainAxisSize.max,
-                                        crossAxisAlignment:
-                                            CrossAxisAlignment.start,
-                                        children: <Widget>[
-                                          Container(
-                                              margin: EdgeInsets.all(10.0),
-                                              height: 70.0,
-                                              width: 70.0,
-                                              decoration: BoxDecoration(
-                                                  image: DecorationImage(
-                                                      image: Image.network(
-                                                              _mensaje
-                                                                  .fotoProfesor)
-                                                          .image,
-                                                      fit: BoxFit.cover),
-                                                  shape: BoxShape.circle)),
-                                          Flexible(
-                                            child: Container(
-                                              margin: EdgeInsets.all(5.0),
-                                              child: Wrap(
-                                                alignment: WrapAlignment.start,
-                                                direction: Axis.horizontal,
-                                                runSpacing: 5.0,
-                                                children: <Widget>[
-                                                  Column(
-                                                    mainAxisSize:
-                                                        MainAxisSize.max,
-                                                    mainAxisAlignment:
-                                                        MainAxisAlignment.start,
-                                                    crossAxisAlignment:
-                                                        CrossAxisAlignment
-                                                            .start,
-                                                    children: <Widget>[
-                                                      Text("Profesor: " +
-                                                          _mensaje
-                                                              .nombreProfesor),
-                                                      Text("Fecha: " +
-                                                          _mensaje
-                                                              .fechaCreacionMensaje),
-                                                      Text("Titulo: " +
-                                                          _mensaje
-                                                              .nombreMensaje),
-                                                      Text("Curso: " +
-                                                          _mensaje.curso),
-                                                    ],
-                                                  )
-                                                ],
-                                              ),
-                                            ),
-                                          ),
-                                          _mensaje.visto == "Procesando"
-                                              ? Icon(
-                                                  Icons.check_circle_outline,
-                                                  color: Colors.blue,
-                                                )
-                                              : Icon(
-                                                  Icons.check_circle,
-                                                  color: Colors.blue,
-                                                ),
-                                        ],
-                                      )),
-                                ),
-                              ));
-                        },
-                      ));
-          }
-        },
-      );
-    }
+    
 
     Widget elegirDestinatario() {
       return SingleChildScrollView(
@@ -1568,7 +1459,7 @@ class _MyHomePageState extends State<MyHomePage>
                   color: Colors.green.shade300,
                   child: GestureDetector(
                     onTap: () {
-                      cursosProfesor();
+                      cursosProfesorMensaje();
                       demo.resetCounter(10);
                     },
                     child: Center(
